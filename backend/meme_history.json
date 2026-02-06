@@ -1,0 +1,189 @@
+[
+  {
+    "id": "b64942fd-52a7-4af7-a4b7-1e5c91e328ad",
+    "prompt": "笑不活了",
+    "optimizedPrompt": "笑不活了, retro style, pixel art, 8-bit, vintage, nostalgic, retro pixel art, 8-bit style, limited color palette, nostalgic vibe, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "retro",
+    "imageUrl": "/static/uploads/processed_meme_3b5850de.png",
+    "createdAt": "2026-02-06T08:28:33.236300",
+    "provider": "clipdrop",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "d1e701d4-8cad-4515-86ef-1906169ecec2",
+    "prompt": "笑不活了",
+    "optimizedPrompt": "笑不活了, retro style, pixel art, 8-bit, vintage, nostalgic, retro pixel art, 8-bit style, limited color palette, nostalgic vibe, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "retro",
+    "imageUrl": "/static/uploads/processed_meme_e87ee86c.png",
+    "createdAt": "2026-02-06T08:28:27.465563",
+    "provider": "clipdrop",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "65421bca-c31e-40da-bb07-e7c226cd5422",
+    "prompt": "笑不活了",
+    "optimizedPrompt": "笑不活了, retro style, pixel art, 8-bit, vintage, nostalgic, retro pixel art, 8-bit style, limited color palette, nostalgic vibe, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "retro",
+    "imageUrl": "/static/uploads/processed_meme_5bec9f05.png",
+    "createdAt": "2026-02-06T08:28:02.349593",
+    "provider": "mock",
+    "isMock": true,
+    "styleStrength": 2
+  },
+  {
+    "id": "dea77d33-70b9-484b-ae60-72de99ac205d",
+    "prompt": "笑不活了",
+    "optimizedPrompt": "笑不活了, retro style, pixel art, 8-bit, vintage, nostalgic, retro pixel art, 8-bit style, limited color palette, nostalgic vibe, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "retro",
+    "imageUrl": "/static/uploads/processed_meme_4fd70453.png",
+    "createdAt": "2026-02-06T08:28:01.059511",
+    "provider": "mock",
+    "isMock": true,
+    "styleStrength": 2
+  },
+  {
+    "id": "56d0261c-2cf1-4ccb-a4c0-c4d654d9dfa8",
+    "prompt": "老板让我加班",
+    "optimizedPrompt": "boss making me work overtime, tired, exhausted, frustrated, minimalist, simple, clean design, flat design, modern, minimalist illustration, simple shapes, clean background, limited colors, extremely stylized, very strong style, distinctive look, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "minimalist",
+    "imageUrl": "/static/uploads/processed_meme_47ae368d.png",
+    "createdAt": "2026-02-06T07:02:08.896968",
+    "provider": "clipdrop",
+    "isMock": false,
+    "styleStrength": 3
+  },
+  {
+    "id": "fb1e267e-4536-4158-8214-f77df29a4232",
+    "prompt": "老板让我加班",
+    "optimizedPrompt": "boss making me work overtime, tired, exhausted, frustrated, cartoon style, comic style, funny, exaggerated, vibrant colors, cartoon character, bold outlines, vibrant flat colors, exaggerated expression, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "cartoon",
+    "imageUrl": "/static/uploads/processed_meme_7c261276.png",
+    "createdAt": "2026-02-06T07:00:47.370842",
+    "provider": "clipdrop",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "717101de-a5ad-42d2-9cfd-b96e2e83fba4",
+    "prompt": "我太难了",
+    "optimizedPrompt": "feeling overwhelmed and stressed, sad face, dramatic, minimalist, simple, clean design, flat design, modern, minimalist illustration, simple shapes, clean background, limited colors, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "minimalist",
+    "imageUrl": "/static/uploads/processed_meme_eedc0372.png",
+    "createdAt": "2026-02-04T08:57:27.028086",
+    "provider": "clipdrop",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "208011ea-1fe1-46af-a1f1-d24fd0556551",
+    "prompt": "我太难了",
+    "optimizedPrompt": "feeling overwhelmed and stressed, sad face, dramatic, minimalist, simple, clean design, flat design, modern, minimalist illustration, simple shapes, clean background, limited colors, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "minimalist",
+    "imageUrl": "/static/uploads/processed_meme_7f0a1f23.png",
+    "createdAt": "2026-02-04T08:57:22.145661",
+    "provider": "clipdrop",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "d9a93702-c46b-4af6-89de-9d33beafb874",
+    "prompt": "我太难了",
+    "optimizedPrompt": "feeling overwhelmed and stressed, sad face, dramatic, cartoon style, comic style, funny, exaggerated, vibrant colors, cartoon character, bold outlines, vibrant flat colors, exaggerated expression, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "cartoon",
+    "imageUrl": "/static/uploads/processed_meme_b59efe0c.png",
+    "createdAt": "2026-02-04T08:15:33.910701",
+    "provider": "template",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "198aecdb-0c1d-44f8-ab00-a5a5a3094681",
+    "prompt": "我太难了",
+    "optimizedPrompt": "feeling overwhelmed and stressed, sad face, dramatic, cartoon style, comic style, funny, exaggerated, vibrant colors, cartoon character, bold outlines, vibrant flat colors, exaggerated expression, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "cartoon",
+    "imageUrl": "/static/uploads/processed_meme_602bc5d3.png",
+    "createdAt": "2026-02-04T08:12:38.494508",
+    "provider": "clipdrop",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "4252ff36-998b-49bb-adce-d9c807f0e59d",
+    "prompt": "我太难了",
+    "optimizedPrompt": "feeling overwhelmed and stressed, sad face, dramatic, minimalist, simple, clean design, flat design, modern, minimalist illustration, simple shapes, clean background, limited colors, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "minimalist",
+    "imageUrl": "/static/uploads/processed_meme_c145d3f5.png",
+    "createdAt": "2026-02-04T07:55:20.175950",
+    "provider": "template",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "d5e92055-dda3-482f-bfe8-557c7f964983",
+    "prompt": "我太难了",
+    "optimizedPrompt": "feeling overwhelmed and stressed, sad face, dramatic, minimalist, simple, clean design, flat design, modern, minimalist illustration, simple shapes, clean background, limited colors, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "minimalist",
+    "imageUrl": "/static/uploads/processed_meme_b5f6c299.png",
+    "createdAt": "2026-02-04T07:55:20.157442",
+    "provider": "template",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "83bde4ad-1a26-441b-9506-de9e7a36b3bf",
+    "prompt": "葛优躺，懒人，累麻了",
+    "optimizedPrompt": "葛优躺，懒人，累麻了, photorealistic, realistic, detailed, high quality, professional, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "realistic",
+    "imageUrl": "/static/uploads/processed_meme_5bb96a17.png",
+    "createdAt": "2026-02-04T07:22:22.188523",
+    "provider": "clipdrop",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "bf61dafc-c46f-42ba-ae25-b9c0d5e6af93",
+    "prompt": "你好",
+    "optimizedPrompt": "你好, cartoon style, comic style, funny, exaggerated, vibrant colors, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "cartoon",
+    "imageUrl": "/static/uploads/processed_meme_1fac6607.png",
+    "createdAt": "2026-02-04T07:21:22.251702",
+    "provider": "clipdrop",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "3cc1b811-9185-4a23-a63b-79b8c8306a4e",
+    "prompt": "你好",
+    "optimizedPrompt": "你好, cartoon style, comic style, funny, exaggerated, vibrant colors, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "cartoon",
+    "imageUrl": "/static/uploads/processed_meme_92b35304.png",
+    "createdAt": "2026-02-04T07:19:26.167432",
+    "provider": "mock",
+    "isMock": true,
+    "styleStrength": 2
+  },
+  {
+    "id": "22fc2e07-794b-48a1-aa00-629dfb138bee",
+    "prompt": "a cute panda eating bamboo",
+    "optimizedPrompt": "a cute panda eating bamboo, cartoon style, comic style, funny, exaggerated, vibrant colors, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "cartoon",
+    "imageUrl": "/static/uploads/meme_b9e1b880.png",
+    "createdAt": "2026-01-28T02:50:55.903120",
+    "provider": "unknown",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
+    "id": "3e0d74fa-3a36-4dd5-8740-c25a9d62732a",
+    "prompt": "test",
+    "optimizedPrompt": "test, cartoon style, comic style, funny, exaggerated, vibrant colors, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "cartoon",
+    "imageUrl": "/static/uploads/meme_e8263bfd.png",
+    "createdAt": "2026-01-28T02:29:32.220627",
+    "provider": "unknown",
+    "isMock": false,
+    "styleStrength": 2
+  }
+]
