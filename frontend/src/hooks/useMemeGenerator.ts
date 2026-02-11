@@ -9,11 +9,34 @@ import {
 import { HistoryItem } from '../components/HistoryComponent';
 import { StyleType } from '../components/StyleSelector';
 
+const SETTINGS_KEY = 'meme_generator_settings';
+
+interface SavedSettings {
+  style: StyleType;
+  styleStrength: number;
+  numVariants: number;
+  memeMode: boolean;
+  autoCaption: boolean;
+  selectedTemplate: string | null;
+}
+
+const getSavedSettings = (): SavedSettings | null => {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as SavedSettings;
+  } catch {
+    return null;
+  }
+};
+
 export const useMemeGenerator = () => {
+  const savedSettings = getSavedSettings();
+
   const [prompt, setPrompt] = useState('');
   const [optimizedPrompt, setOptimizedPrompt] = useState('');
-  const [style, setStyle] = useState<StyleType>('cartoon');
-  const [styleStrength, setStyleStrength] = useState<number>(2);
+  const [style, setStyle] = useState<StyleType>(savedSettings?.style || 'cartoon');
+  const [styleStrength, setStyleStrength] = useState<number>(savedSettings?.styleStrength || 2);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
@@ -26,10 +49,12 @@ export const useMemeGenerator = () => {
   const [providersError, setProvidersError] = useState<string | undefined>();
   const [templates, setTemplates] = useState<TemplateItem[]>([]);
   const [templatesError, setTemplatesError] = useState<string | undefined>();
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [numVariants, setNumVariants] = useState<number>(1);
-  const [memeMode, setMemeMode] = useState<boolean>(false);
-  const [autoCaption, setAutoCaption] = useState<boolean>(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(
+    savedSettings?.selectedTemplate ?? null
+  );
+  const [numVariants, setNumVariants] = useState<number>(savedSettings?.numVariants || 1);
+  const [memeMode, setMemeMode] = useState<boolean>(savedSettings?.memeMode || false);
+  const [autoCaption, setAutoCaption] = useState<boolean>(savedSettings?.autoCaption || false);
   const [captionSuggestions, setCaptionSuggestions] = useState<string[]>([]);
   const [selectedCaption, setSelectedCaption] = useState<string | null>(null);
   const [captionLoading, setCaptionLoading] = useState<boolean>(false);
@@ -85,6 +110,18 @@ export const useMemeGenerator = () => {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    const settings: SavedSettings = {
+      style,
+      styleStrength,
+      numVariants,
+      memeMode,
+      autoCaption,
+      selectedTemplate,
+    };
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  }, [style, styleStrength, numVariants, memeMode, autoCaption, selectedTemplate]);
 
   const fetchCaptions = useCallback(async () => {
     if (!prompt.trim()) return;

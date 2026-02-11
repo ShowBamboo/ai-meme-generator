@@ -41,6 +41,8 @@ const InputComponent: React.FC<InputProps> = ({
     }
   };
 
+  const charsLeft = Math.max(0, 200 - value.length);
+
   return (
     <div className="input-section">
       <div className="prompt-presets">
@@ -57,6 +59,10 @@ const InputComponent: React.FC<InputProps> = ({
       </div>
 
       <div className="input-container">
+        <div className="input-meta">
+          <span>回车生成，Shift + 回车换行</span>
+          <span className={charsLeft < 20 ? 'danger' : ''}>剩余 {charsLeft} 字</span>
+        </div>
         <textarea
           className="prompt-input"
           value={value}
@@ -64,17 +70,34 @@ const InputComponent: React.FC<InputProps> = ({
           onKeyDown={handleKeyDown}
           placeholder="输入你的创意，例如：'我太难了'、'老板让我加班'..."
           rows={3}
+          maxLength={200}
           disabled={isLoading}
         />
-        <button
-          type="button"
-          className="generate-btn"
-          onClick={onSubmit}
-          disabled={isLoading || !value.trim()}
-          aria-busy={isLoading}
-        >
-          {isLoading ? '生成中...' : <><IconSparkle className="btn-icon" /> 生成表情包</>}
-        </button>
+        <div className="input-actions">
+          <button
+            type="button"
+            className="ghost-btn"
+            onClick={() => onChange('')}
+            disabled={isLoading || !value}
+          >
+            清空
+          </button>
+          <button
+            type="button"
+            className="generate-btn"
+            onClick={onSubmit}
+            disabled={isLoading || !value.trim()}
+            aria-busy={isLoading}
+          >
+            {isLoading ? (
+              '生成中...'
+            ) : (
+              <>
+                <IconSparkle className="btn-icon" /> 生成表情包
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {autoCaption && (
@@ -91,6 +114,9 @@ const InputComponent: React.FC<InputProps> = ({
             </button>
           </div>
           {captionError && <p className="caption-error">{captionError}</p>}
+          {!captionError && !captionLoading && captionSuggestions.length === 0 && (
+            <p className="caption-empty">点击“换一批”生成文案候选</p>
+          )}
           <div className="caption-list">
             {captionSuggestions.map((caption) => (
               <button

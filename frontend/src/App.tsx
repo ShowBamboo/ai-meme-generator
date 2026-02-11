@@ -7,6 +7,8 @@ import HistoryComponent, { HistoryItem } from './components/HistoryComponent';
 import { IconMask, IconHeart } from './components/Icons';
 import { useMemeGenerator } from './hooks/useMemeGenerator';
 
+const isProviderEnabled = (value: string) => value.toLowerCase() === 'true';
+
 const App: React.FC = () => {
   const {
     prompt,
@@ -62,6 +64,11 @@ const App: React.FC = () => {
     selectHistoryItem(item);
   };
 
+  const handleSelectCaption = (caption: string) => {
+    setSelectedCaption(caption);
+    setPrompt(caption);
+  };
+
   const promptPresets = [
     '我太难了',
     '打工人',
@@ -93,13 +100,20 @@ const App: React.FC = () => {
   }, [history, historyFavoritesOnly, favoriteIds, historyProvider, historyQuery]);
 
   const clipdropStatus = providers.find((item) => item.name === 'clipdrop');
+  const enabledProvidersCount = providers.filter((item) => isProviderEnabled(item.enabled)).length;
+  const currentTemplate = templates.find((item) => item.id === selectedTemplate);
+  const activeProviderLabel =
+    provider === 'template'
+      ? `模板：${currentTemplate?.name || selectedTemplate || 'unknown'}`
+      : provider || '未生成';
+
   let previewNotice: string | undefined;
   if (provider === 'template') {
-    previewNotice = '当前使用模板生成：提示词不会改变图像本体，仅用于文案与气泡。';
+    previewNotice = '当前使用模板模式：默认在模板上叠加文案；接入 A1111 后可启用 img2img 风格化。';
   } else if (isMock) {
     previewNotice =
       '当前所有真实模型不可用，已使用 Mock 占位图。请配置 CLIPDROP_API_KEY 或 SD_WEBUI_URL。';
-  } else if (provider && provider !== 'clipdrop' && clipdropStatus?.enabled === 'false') {
+  } else if (provider && provider !== 'clipdrop' && clipdropStatus && !isProviderEnabled(clipdropStatus.enabled)) {
     previewNotice = `Clipdrop 未配置或不可用，已切换到 ${provider}。`;
   }
 
@@ -110,7 +124,16 @@ const App: React.FC = () => {
           <IconMask className="header-icon" aria-hidden />
           AI 表情包生成器
         </h1>
-        <p>输入一句话，AI 为你创作专属表情包</p>
+        <p>输入一句话，快速生成可下载、可超清、可复用的梗图</p>
+        <div className="hero-status-row">
+          <span className={`hero-pill ${isMock ? 'warn' : ''}`}>
+            当前来源：{isMock ? 'Mock 占位' : activeProviderLabel}
+          </span>
+          <span className="hero-pill">
+            模型可用：{enabledProvidersCount}/{providers.length || 0}
+          </span>
+          <span className="hero-pill">历史：{history.length} 条</span>
+        </div>
       </header>
 
       <main className="main-content">
@@ -127,7 +150,7 @@ const App: React.FC = () => {
               autoCaption={autoCaption}
               captionSuggestions={captionSuggestions}
               selectedCaption={selectedCaption}
-              onSelectCaption={setSelectedCaption}
+              onSelectCaption={handleSelectCaption}
               onRefreshCaptions={fetchCaptions}
               captionLoading={captionLoading}
               captionError={captionError}
@@ -136,6 +159,9 @@ const App: React.FC = () => {
 
           <div className="section config-section">
             <h3>生成配置</h3>
+            <p className="section-subtitle">
+              当前配置会自动记忆，下次打开可直接延续。
+            </p>
             <div className="config-row">
               <label className="config-label">
                 <input
@@ -150,6 +176,11 @@ const App: React.FC = () => {
                 />
                 自动文案
               </label>
+              <span className="config-tip">
+                {autoCaption ? '将优先使用候选文案' : '将直接使用你的输入作为文案'}
+              </span>
+            </div>
+            <div className="config-row">
               <label className="config-label">
                 <input
                   type="checkbox"
@@ -159,6 +190,9 @@ const App: React.FC = () => {
                 />
                 热梗模式
               </label>
+              <span className="config-tip">
+                {memeMode ? '强化网络梗语气' : '关闭后文案更中性'}
+              </span>
             </div>
             <div className="config-row">
               <span id="num-variants-label">变体数量</span>
@@ -177,7 +211,9 @@ const App: React.FC = () => {
 
           <div className="section template-section">
             <h3>模板库</h3>
-            <p className="template-hint">模板不会改变图像内容，仅用于叠加文案。</p>
+            <p className="template-hint">
+              不选模板时走纯 AI 生图；选模板时默认在模板上叠加文案。
+            </p>
             {templatesError && <p className="template-error">{templatesError}</p>}
             <div className="template-grid">
               <button
@@ -204,6 +240,11 @@ const App: React.FC = () => {
                 </button>
               ))}
             </div>
+            {selectedTemplate && currentTemplate && (
+              <p className="template-meta">
+                已选模板：{currentTemplate.name}
+              </p>
+            )}
           </div>
 
           <div className="section style-section">
@@ -265,10 +306,15 @@ const App: React.FC = () => {
               <p className="provider-empty">未获取到可用模型状态</p>
             )}
             {providers.map((item) => (
-              <div key={item.name} className="provider-item">
+              <div
+                key={item.name}
+                className={`provider-item ${
+                  provider === item.name && !isMock ? 'active' : ''
+                }`}
+              >
                 <span className="provider-name">{item.name}</span>
-                <span className={`provider-status ${item.enabled === 'true' ? 'ok' : 'bad'}`}>
-                  {item.enabled === 'true' ? '可用' : '不可用'}
+                <span className={`provider-status ${isProviderEnabled(item.enabled) ? 'ok' : 'bad'}`}>
+                  {isProviderEnabled(item.enabled) ? '可用' : '不可用'}
                 </span>
                 <span className="provider-detail">{item.detail}</span>
               </div>

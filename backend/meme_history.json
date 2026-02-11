@@ -1,5 +1,16 @@
 [
   {
+    "id": "0a51a493-3ee8-43f2-9366-138bcac67c38",
+    "prompt": "哈哈哈哈，让子弹再飞一会儿，像素风yyds，别问，问就是",
+    "optimizedPrompt": "哈哈哈哈，让子弹再飞一会儿，像素风yyds，别问，问就是, retro style, pixel art, 8-bit, vintage, nostalgic, retro pixel art, 8-bit style, limited color palette, nostalgic vibe, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",
+    "style": "retro",
+    "imageUrl": "/static/uploads/processed_meme_fb87856c.png",
+    "createdAt": "2026-02-11T08:00:45.909542",
+    "provider": "pollinations",
+    "isMock": false,
+    "styleStrength": 2
+  },
+  {
     "id": "b64942fd-52a7-4af7-a4b7-1e5c91e328ad",
     "prompt": "笑不活了",
     "optimizedPrompt": "笑不活了, retro style, pixel art, 8-bit, vintage, nostalgic, retro pixel art, 8-bit style, limited color palette, nostalgic vibe, highly stylized, strong style, single character, centered composition, clean background, meme sticker, leave space for caption, internet meme, viral, humorous, expressive reaction, caption friendly, bold emotions, high resolution, sharp focus, detailed, beautiful, cute, funny meme",

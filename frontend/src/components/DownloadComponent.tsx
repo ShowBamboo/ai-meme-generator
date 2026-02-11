@@ -19,7 +19,7 @@ const DownloadComponent: React.FC<DownloadProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
-  const [compareZoom, setCompareZoom] = useState(2.0);
+  const [activeCompare, setActiveCompare] = useState<'origin' | 'upscaled'>('upscaled');
   const [origSize, setOrigSize] = useState<string>('');
   const [upSize, setUpSize] = useState<string>('');
 
@@ -34,6 +34,13 @@ const DownloadComponent: React.FC<DownloadProps> = ({
     const img = new Image();
     img.onload = () => setUpSize(`${img.naturalWidth}×${img.naturalHeight}`);
     img.src = upscaledImageUrl;
+  }, [upscaledImageUrl]);
+
+  useEffect(() => {
+    if (upscaledImageUrl) {
+      setCompareOpen(true);
+      setActiveCompare('upscaled');
+    }
   }, [upscaledImageUrl]);
 
   const handleDownload = async (urlToDownload: string) => {
@@ -55,7 +62,7 @@ const DownloadComponent: React.FC<DownloadProps> = ({
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(imageUrl);
+      await navigator.clipboard.writeText(upscaledImageUrl || imageUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
@@ -65,14 +72,15 @@ const DownloadComponent: React.FC<DownloadProps> = ({
 
   const handleShare = (platform: string) => {
     const text = encodeURIComponent('看看我生成的 AI 表情包！');
+    const currentUrl = encodeURIComponent(upscaledImageUrl || imageUrl);
     let shareUrl = '';
 
     switch (platform) {
       case 'twitter':
-        shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(imageUrl)}`;
+        shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${currentUrl}`;
         break;
       case 'weibo':
-        shareUrl = `https://service.weibo.com/share/share.php?url=${encodeURIComponent(imageUrl)}&title=${text}`;
+        shareUrl = `https://service.weibo.com/share/share.php?url=${currentUrl}&title=${text}`;
         break;
     }
 
@@ -121,50 +129,53 @@ const DownloadComponent: React.FC<DownloadProps> = ({
 
       {upscaledImageUrl && (
         <div className="compare-section">
-          <button
-            type="button"
-            className="compare-toggle"
-            onClick={() => setCompareOpen((prev) => !prev)}
-          >
-            {compareOpen ? '收起对比' : '查看对比'}
-          </button>
+          <div className="compare-header">
+            <h4>超清对比</h4>
+            <button
+              type="button"
+              className="compare-toggle"
+              onClick={() => setCompareOpen((prev) => !prev)}
+            >
+              {compareOpen ? '收起' : '展开'}
+            </button>
+          </div>
           {compareOpen && (
             <>
-              <div className="compare-controls">
-                <div className="compare-zoom">
-                  <span>放大</span>
-                  <input
-                    type="range"
-                    min={1}
-                    max={3}
-                    step={0.1}
-                    value={compareZoom}
-                    onChange={(e) => setCompareZoom(Number(e.target.value))}
-                    aria-label="对比放大倍数"
-                  />
-                  <span>{compareZoom.toFixed(1)}x</span>
-                </div>
-              </div>
-
               <div className="compare-grid">
-                <div className="compare-pane">
-                  <span className="compare-tag">原图 {origSize}</span>
+                <button
+                  type="button"
+                  className={`compare-pane ${activeCompare === 'origin' ? 'active' : ''}`}
+                  onClick={() => setActiveCompare('origin')}
+                >
+                  <span className="compare-tag">原图 {origSize || '-'}</span>
                   <img
                     src={imageUrl}
                     alt="原图"
                     className="compare-img"
-                    style={{ transform: `scale(${compareZoom})` }}
                   />
-                </div>
-                <div className="compare-pane">
-                  <span className="compare-tag">超清 {upSize}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`compare-pane ${activeCompare === 'upscaled' ? 'active' : ''}`}
+                  onClick={() => setActiveCompare('upscaled')}
+                >
+                  <span className="compare-tag">超清 {upSize || '-'}</span>
                   <img
                     src={upscaledImageUrl}
                     alt="超清图"
                     className="compare-img"
-                    style={{ transform: `scale(${compareZoom})` }}
                   />
-                </div>
+                </button>
+              </div>
+              <div className="compare-focus">
+                <span className="compare-focus-label">
+                  当前查看：{activeCompare === 'upscaled' ? '超清图' : '原图'}
+                </span>
+                <img
+                  src={activeCompare === 'upscaled' ? upscaledImageUrl : imageUrl}
+                  alt={activeCompare === 'upscaled' ? '超清图预览' : '原图预览'}
+                  className="compare-focus-image"
+                />
               </div>
             </>
           )}
