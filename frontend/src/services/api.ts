@@ -58,6 +58,25 @@ export interface ProviderStatus {
   detail: string;
 }
 
+export interface TemplateSyncRequest {
+  source: 'imgflip' | 'urls';
+  limit?: number;
+  force?: boolean;
+  urls?: string[];
+}
+
+export interface TemplateSyncResponse {
+  success: boolean;
+  result: {
+    source: string;
+    requested: number;
+    added: number;
+    skipped: number;
+    failed: number;
+  };
+  templates: TemplateItem[];
+}
+
 class ApiService {
   async generateMeme(request: GenerateRequest): Promise<GenerateResponse> {
     const response = await fetch(`${API_BASE}/generate`, {
@@ -125,6 +144,22 @@ class ApiService {
     }
     const data = await response.json();
     return data.templates || [];
+  }
+
+  async syncTemplates(request: TemplateSyncRequest): Promise<TemplateSyncResponse> {
+    const response = await fetch(`${API_BASE}/templates/sync`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(message || '同步模板失败');
+    }
+    return response.json();
   }
 
   async generateCaption(prompt: string, style: string, memeMode: boolean): Promise<string> {

@@ -222,6 +222,38 @@ async def generate_caption_batch(request: CaptionBatchRequest) -> dict:
     return {"captions": captions}
 
 
+class TemplateSyncRequest(BaseModel):
+    source: str = Field(default="imgflip", description="imgflip | urls")
+    limit: conint(ge=1, le=60) = 20
+    force: bool = False
+    urls: Optional[list[str]] = None
+
+
+@router.post("/templates/sync")
+async def sync_templates(request: TemplateSyncRequest) -> dict:
+    source = (request.source or "imgflip").strip().lower()
+    try:
+        if source == "imgflip":
+            result = template_library.sync_imgflip(limit=int(request.limit), force=request.force)
+        elif source == "urls":
+            urls = request.urls or []
+            if not urls:
+                raise HTTPException(status_code=400, detail="urls is required when source=urls")
+            result = template_library.sync_urls(urls=urls, force=request.force)
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported source")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e))
+
+    return {
+        "success": True,
+        "result": result,
+        "templates": template_library.list_templates(),
+    }
+
+
 class UpscaleRequest(BaseModel):
     imageUrl: constr(strip_whitespace=True, min_length=1)
 

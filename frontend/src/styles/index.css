@@ -405,6 +405,49 @@ body::after {
   color: var(--text-secondary);
 }
 
+.template-sync-actions {
+  margin-top: 12px;
+}
+
+.template-sync-btn {
+  min-height: 40px;
+  width: 100%;
+}
+
+.template-url-box {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.template-url-input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--background);
+  color: var(--text-primary);
+  padding: 10px;
+  resize: vertical;
+}
+
+.template-url-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: var(--focus-ring);
+}
+
+.template-sync-message {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: #86efac;
+}
+
+.template-sync-error {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: #fca5a5;
+}
+
 /* Variants */
 .variants-section {
   margin-top: 16px;

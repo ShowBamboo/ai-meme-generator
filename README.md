@@ -12,7 +12,7 @@
 - 生成配置会自动记忆（风格、强度、变体数、模板选择、热梗模式、自动文案）
 
 ### 2) 多模型与容灾
-- 多提供方路由与优先级切换：`clipdrop / webui / replicate / huggingface / pollinations / mock`
+- 多提供方路由与优先级切换：`clipdrop / siliconflow / webui / pollinations / mock`
 - 实时展示提供方可用状态（前端可见）
 - 当真实模型不可用时自动回退到 `mock`，保证流程不中断
 
@@ -31,6 +31,7 @@
 - 模板库选择（可扩展为真实梗图素材）
 - 模板模式下默认在模板图上叠加文案
 - 可扩展接入 A1111 `img2img` 对模板进行风格化重绘
+- 一键同步网络热梗模板（Imgflip）+ 支持粘贴图片 URL 下载到本地模板库
 
 ### 6) 图片增强与导出
 - 超清增强入口（独立按钮，不是默认行为）
@@ -142,6 +143,7 @@ npm run dev
 - `POST /api/optimize-prompt`：仅优化提示词
 - `GET /api/providers`：查询提供方状态
 - `GET /api/templates`：查询模板列表
+- `POST /api/templates/sync`：同步热梗模板（`source=imgflip`）或下载 URL 模板（`source=urls`）
 - `POST /api/caption`：单条文案生成
 - `POST /api/caption/batch`：批量文案候选
 - `POST /api/upscale`：超清增强
@@ -175,7 +177,7 @@ npm run dev
 
 - 前端：React 18、TypeScript、Vite、CSS
 - 后端：FastAPI、Pydantic、Pillow、Requests
-- 可选模型：Clipdrop、A1111 WebUI、Replicate、Hugging Face Router、Pollinations、外部文案 LLM
+- 可选模型：Clipdrop、SiliconFlow、A1111 WebUI、Pollinations、外部文案 LLM
 
 ## License
 

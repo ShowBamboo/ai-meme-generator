@@ -33,6 +33,11 @@ const App: React.FC = () => {
     templatesError,
     selectedTemplate,
     setSelectedTemplate,
+    templateSyncing,
+    templateSyncMessage,
+    templateSyncError,
+    syncImgflipTemplates,
+    syncUrlTemplates,
     numVariants,
     setNumVariants,
     memeMode,
@@ -59,6 +64,7 @@ const App: React.FC = () => {
   const [historyQuery, setHistoryQuery] = useState('');
   const [historyProvider, setHistoryProvider] = useState('all');
   const [historyFavoritesOnly, setHistoryFavoritesOnly] = useState(false);
+  const [templateUrlsText, setTemplateUrlsText] = useState('');
 
   const handleSelectHistory = (item: HistoryItem) => {
     selectHistoryItem(item);
@@ -67,6 +73,16 @@ const App: React.FC = () => {
   const handleSelectCaption = (caption: string) => {
     setSelectedCaption(caption);
     setPrompt(caption);
+  };
+
+  const handleSyncUrlTemplates = async () => {
+    const urls = templateUrlsText
+      .split('\n')
+      .map((item) => item.trim())
+      .filter(Boolean);
+    if (urls.length === 0) return;
+    await syncUrlTemplates(urls);
+    setTemplateUrlsText('');
   };
 
   const promptPresets = [
@@ -98,6 +114,11 @@ const App: React.FC = () => {
       return true;
     });
   }, [history, historyFavoritesOnly, favoriteIds, historyProvider, historyQuery]);
+
+  const displayProviders = useMemo(
+    () => providers.filter((item) => isProviderEnabled(item.enabled) || item.name === 'mock'),
+    [providers]
+  );
 
   const clipdropStatus = providers.find((item) => item.name === 'clipdrop');
   const enabledProvidersCount = providers.filter((item) => isProviderEnabled(item.enabled)).length;
@@ -240,6 +261,35 @@ const App: React.FC = () => {
                 </button>
               ))}
             </div>
+            <div className="template-sync-actions">
+              <button
+                type="button"
+                className="ghost-btn template-sync-btn"
+                onClick={syncImgflipTemplates}
+                disabled={templateSyncing}
+              >
+                {templateSyncing ? '同步中...' : '同步热梗模板(Imgflip)'}
+              </button>
+            </div>
+            <div className="template-url-box">
+              <textarea
+                value={templateUrlsText}
+                onChange={(e) => setTemplateUrlsText(e.target.value)}
+                className="template-url-input"
+                placeholder="粘贴图片 URL（每行一个），例如：https://xxx.com/meme.jpg"
+                rows={3}
+              />
+              <button
+                type="button"
+                className="ghost-btn template-sync-btn"
+                onClick={handleSyncUrlTemplates}
+                disabled={templateSyncing || !templateUrlsText.trim()}
+              >
+                下载 URL 模板
+              </button>
+            </div>
+            {templateSyncMessage && <p className="template-sync-message">{templateSyncMessage}</p>}
+            {templateSyncError && <p className="template-sync-error">{templateSyncError}</p>}
             {selectedTemplate && currentTemplate && (
               <p className="template-meta">
                 已选模板：{currentTemplate.name}
@@ -302,10 +352,10 @@ const App: React.FC = () => {
           <div className="section provider-section">
             <h3>可用模型</h3>
             {providersError && <p className="provider-error">{providersError}</p>}
-            {!providersError && providers.length === 0 && (
+            {!providersError && displayProviders.length === 0 && (
               <p className="provider-empty">未获取到可用模型状态</p>
             )}
-            {providers.map((item) => (
+            {displayProviders.map((item) => (
               <div
                 key={item.name}
                 className={`provider-item ${

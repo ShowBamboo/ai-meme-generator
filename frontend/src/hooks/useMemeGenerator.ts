@@ -52,6 +52,9 @@ export const useMemeGenerator = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(
     savedSettings?.selectedTemplate ?? null
   );
+  const [templateSyncing, setTemplateSyncing] = useState<boolean>(false);
+  const [templateSyncMessage, setTemplateSyncMessage] = useState<string | undefined>();
+  const [templateSyncError, setTemplateSyncError] = useState<string | undefined>();
   const [numVariants, setNumVariants] = useState<number>(savedSettings?.numVariants || 1);
   const [memeMode, setMemeMode] = useState<boolean>(savedSettings?.memeMode || false);
   const [autoCaption, setAutoCaption] = useState<boolean>(savedSettings?.autoCaption || false);
@@ -277,6 +280,46 @@ export const useMemeGenerator = () => {
     }
   }, []);
 
+  const syncImgflipTemplates = useCallback(async () => {
+    setTemplateSyncing(true);
+    setTemplateSyncError(undefined);
+    setTemplateSyncMessage(undefined);
+    try {
+      const data = await apiService.syncTemplates({
+        source: 'imgflip',
+        limit: 20,
+      });
+      setTemplates(data.templates || []);
+      setTemplateSyncMessage(
+        `已同步：新增 ${data.result.added}，跳过 ${data.result.skipped}，失败 ${data.result.failed}`
+      );
+    } catch (err) {
+      setTemplateSyncError(err instanceof Error ? err.message : '同步模板失败');
+    } finally {
+      setTemplateSyncing(false);
+    }
+  }, []);
+
+  const syncUrlTemplates = useCallback(async (urls: string[]) => {
+    setTemplateSyncing(true);
+    setTemplateSyncError(undefined);
+    setTemplateSyncMessage(undefined);
+    try {
+      const data = await apiService.syncTemplates({
+        source: 'urls',
+        urls,
+      });
+      setTemplates(data.templates || []);
+      setTemplateSyncMessage(
+        `URL 同步完成：新增 ${data.result.added}，跳过 ${data.result.skipped}，失败 ${data.result.failed}`
+      );
+    } catch (err) {
+      setTemplateSyncError(err instanceof Error ? err.message : 'URL 模板同步失败');
+    } finally {
+      setTemplateSyncing(false);
+    }
+  }, []);
+
   return {
     prompt,
     setPrompt,
@@ -301,6 +344,11 @@ export const useMemeGenerator = () => {
     templatesError,
     selectedTemplate,
     setSelectedTemplate,
+    templateSyncing,
+    templateSyncMessage,
+    templateSyncError,
+    syncImgflipTemplates,
+    syncUrlTemplates,
     numVariants,
     setNumVariants,
     memeMode,

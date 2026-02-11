@@ -4,11 +4,10 @@
 支持多种图像生成 API，按优先级：
 
 1. Clipdrop (免费额度，需要 API Key)
-2. Local SD WebUI (免费，需要本地 A1111)
-3. Replicate FLUX (推荐，有免费试用)
-4. Hugging Face Router (需要 token)
-5. Pollinations.ai (免费)
-6. Mock 生成 (开发测试)
+2. SiliconFlow (OpenAI-compatible，通常有免费额度)
+3. Local SD WebUI (免费，需要本地 A1111)
+4. Pollinations.ai (免费，可选)
+5. Mock 生成 (开发测试)
 """
 
 import os
@@ -480,13 +479,133 @@ class ClipdropGenerator:
         return f"{prompt}, {enhancement}, meme format"
 
 
+class SiliconFlowGenerator:
+    """SiliconFlow 文生图（OpenAI-compatible）"""
+
+    def __init__(self, api_key: Optional[str] = None):
+        self.api_key = api_key or os.getenv("SILICONFLOW_API_KEY")
+        self.api_url = os.getenv(
+            "SILICONFLOW_API_URL",
+            "https://api.siliconflow.cn/v1/images/generations",
+        ).strip()
+        self.model = os.getenv("SILICONFLOW_MODEL", "Kwai-Kolors/Kolors")
+        self.timeout = int(os.getenv("SILICONFLOW_TIMEOUT", "180"))
+        self.upload_dir = None
+
+        if self.api_key:
+            print(f"🟩 SiliconFlowGenerator initialized (model={self.model})")
+        else:
+            print("🟩 SiliconFlowGenerator initialized (No API key)")
+
+    def set_upload_dir(self, upload_dir: str):
+        self.upload_dir = upload_dir
+        os.makedirs(self.upload_dir, exist_ok=True)
+
+    def is_available(self) -> bool:
+        return bool(self.api_key and self.api_url)
+
+    async def generate(
+        self,
+        prompt: str,
+        style: str = "cartoon",
+        width: int = 512,
+        height: int = 512,
+    ) -> str:
+        if not self.is_available():
+            raise ValueError("SILICONFLOW_API_KEY/SILICONFLOW_API_URL not set")
+
+        print("🟩 Generating image with SiliconFlow...")
+        print(f"   Prompt: {prompt[:60]}...")
+
+        enhanced_prompt = self._build_enhanced_prompt(prompt, style)
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "model": self.model,
+            "prompt": enhanced_prompt,
+            "n": 1,
+            "size": f"{int(width)}x{int(height)}",
+            "response_format": "b64_json",
+        }
+
+        response = requests.post(
+            self.api_url,
+            headers=headers,
+            json=payload,
+            timeout=self.timeout,
+        )
+        if response.status_code >= 400:
+            body_preview = response.text[:800].replace("\n", " ")
+            print(f"❌ SiliconFlow HTTP {response.status_code} body: {body_preview}")
+        response.raise_for_status()
+        data = response.json()
+
+        image_bytes = self._extract_image_bytes(data)
+        if not image_bytes:
+            raise Exception("No image found in SiliconFlow response")
+
+        from PIL import Image
+
+        image = Image.open(BytesIO(image_bytes)).convert("RGB")
+        filename = f"meme_{uuid.uuid4().hex[:8]}.png"
+        filepath = os.path.join(self.upload_dir, filename)
+        image.save(filepath, "PNG")
+        print(f"✅ Image saved: {filename}")
+        return filepath
+
+    def _extract_image_bytes(self, data: dict) -> Optional[bytes]:
+        items = data.get("data") if isinstance(data, dict) else None
+        if isinstance(items, list) and items:
+            first = items[0]
+            if isinstance(first, dict):
+                if first.get("b64_json"):
+                    return base64.b64decode(first["b64_json"])
+                if first.get("url"):
+                    response = requests.get(first["url"], timeout=self.timeout)
+                    response.raise_for_status()
+                    return response.content
+
+        images = data.get("images") if isinstance(data, dict) else None
+        if isinstance(images, list) and images:
+            first = images[0]
+            if isinstance(first, str):
+                response = requests.get(first, timeout=self.timeout)
+                response.raise_for_status()
+                return response.content
+            if isinstance(first, dict):
+                if first.get("b64_json"):
+                    return base64.b64decode(first["b64_json"])
+                if first.get("url"):
+                    response = requests.get(first["url"], timeout=self.timeout)
+                    response.raise_for_status()
+                    return response.content
+
+        return None
+
+    def _build_enhanced_prompt(self, prompt: str, style: str) -> str:
+        style_enhancements = {
+            "cartoon": "cartoon style, bold outlines",
+            "hand-drawn": "hand-drawn illustration, sketch",
+            "anime": "anime art, manga style",
+            "realistic": "photorealistic, realistic",
+            "retro": "pixel art, 8-bit style",
+            "minimalist": "minimalist design, clean lines",
+        }
+
+        enhancement = style_enhancements.get(style, "")
+        return f"{prompt}, {enhancement}, meme format, expressive face"
+
+
 class PollinationsGenerator:
-    """Pollinations.ai 图片生成器 - 完全免费（暂时不可用）"""
+    """Pollinations.ai 图片生成器 - 完全免费（可选兜底）"""
 
     def __init__(self):
         self.base_url = "https://image.pollinations.ai/prompt"
         self.upload_dir = None
-        print(f"🌻 PollinationsGenerator initialized (FREE - currently returning 502)")
+        print(f"🌻 PollinationsGenerator initialized")
 
     def set_upload_dir(self, upload_dir: str):
         self.upload_dir = upload_dir
@@ -564,23 +683,17 @@ class ImageGenerator:
         self.clipdrop = ClipdropGenerator()
         self.clipdrop.set_upload_dir(self.upload_dir)
 
+        self.siliconflow = SiliconFlowGenerator()
+        self.siliconflow.set_upload_dir(self.upload_dir)
+
         self.webui = LocalWebUIGenerator()
         self.webui.set_upload_dir(self.upload_dir)
-
-        self.replicate = ReplicateGenerator()
-        self.replicate.set_upload_dir(self.upload_dir)
-
-        self.huggingface = HuggingFaceGenerator()
-        self.huggingface.set_upload_dir(self.upload_dir)
 
         self.pollinations = PollinationsGenerator()
         self.pollinations.set_upload_dir(self.upload_dir)
 
         # API Token 配置
-        self.clipdrop_key = os.getenv("CLIPDROP_API_KEY")
-        self.replicate_token = os.getenv("REPLICATE_API_TOKEN")
-        self.hf_token = os.getenv("HUGGINGFACE_API_TOKEN")
-        self.pollinations_enabled = _env_flag("POLLINATIONS_ENABLED", True)
+        self.pollinations_enabled = _env_flag("POLLINATIONS_ENABLED", False)
 
         self.forced_provider = os.getenv("IMAGE_GENERATION_PROVIDER") or os.getenv(
             "IMAGE_PROVIDER"
@@ -599,30 +712,24 @@ class ImageGenerator:
         else:
             print(f"      ❌ No API key - Set CLIPDROP_API_KEY")
 
-        print(f"   2. 🧪 Local SD WebUI (free, requires SD_WEBUI_URL)")
+        print(f"   2. 🟩 SiliconFlow (free credits, requires API key)")
+        if self.siliconflow.is_available():
+            print(f"      ✅ API key configured")
+        else:
+            print(f"      ❌ No API key - Set SILICONFLOW_API_KEY")
+
+        print(f"   3. 🧪 Local SD WebUI (free, requires SD_WEBUI_URL)")
         if self.webui.is_available():
             print(f"      ✅ SD_WEBUI_URL configured")
         else:
             print(f"      ❌ No SD_WEBUI_URL")
 
-        print(f"   3. 🤖 Replicate FLUX (best quality, requires token)")
-        if self.replicate_token:
-            print(f"      ✅ Token configured")
-        else:
-            print(f"      ❌ No token - Set REPLICATE_API_TOKEN")
-
-        print(f"   4. 🔧 Hugging Face Router (good quality, requires token)")
-        if self.hf_token:
-            print(f"      ✅ Token configured")
-        else:
-            print(f"      ❌ No token - Set HUGGINGFACE_API_TOKEN")
-
-        print(f"   5. 🌻 Pollinations.ai (free, no token)")
+        print(f"   4. 🌻 Pollinations.ai (free, no token, optional)")
         if self.pollinations_enabled:
             print(f"      ✅ Enabled")
         else:
             print(f"      ❌ Disabled (POLLINATIONS_ENABLED=false)")
-        print(f"   6. 🎭 Mock (development only)")
+        print(f"   5. 🎭 Mock (development only)")
         if self.forced_provider:
             print(f"\n🎯 Forced provider: {self.forced_provider}")
         if self.provider_order:
@@ -630,10 +737,14 @@ class ImageGenerator:
         print("")
 
     def _build_provider_order(self, order_env: Optional[str]) -> List[str]:
+        allowed = {"clipdrop", "siliconflow", "webui", "pollinations", "mock"}
         if order_env:
             items = [item.strip().lower() for item in order_env.split(",") if item.strip()]
-            return items
-        return ["clipdrop", "webui", "replicate", "huggingface", "pollinations", "mock"]
+            items = [item for item in items if item in allowed]
+            if "mock" not in items:
+                items.append("mock")
+            return items or ["clipdrop", "siliconflow", "webui", "pollinations", "mock"]
+        return ["clipdrop", "siliconflow", "webui", "pollinations", "mock"]
 
     def get_provider_status(self) -> List[Dict[str, str]]:
         status = []
@@ -658,20 +769,14 @@ class ImageGenerator:
                         "detail": "API key configured" if self.clipdrop.is_available() else "Missing CLIPDROP_API_KEY",
                     }
                 )
-            elif name == "replicate":
+            elif name == "siliconflow":
                 status.append(
                     {
-                        "name": "replicate",
-                        "enabled": "true" if self.replicate_token else "false",
-                        "detail": "Token configured" if self.replicate_token else "Missing REPLICATE_API_TOKEN",
-                    }
-                )
-            elif name == "huggingface":
-                status.append(
-                    {
-                        "name": "huggingface",
-                        "enabled": "true" if self.hf_token else "false",
-                        "detail": "Token configured" if self.hf_token else "Missing HUGGINGFACE_API_TOKEN",
+                        "name": "siliconflow",
+                        "enabled": "true" if self.siliconflow.is_available() else "false",
+                        "detail": "API key configured"
+                        if self.siliconflow.is_available()
+                        else "Missing SILICONFLOW_API_KEY",
                     }
                 )
             elif name == "pollinations":
@@ -711,7 +816,7 @@ class ImageGenerator:
         """
         生成图片 - 自动选择最佳可用方式
 
-        Priority: Clipdrop → Local WebUI → Replicate → HuggingFace → Pollinations → Mock
+        Priority: Clipdrop → SiliconFlow → Local WebUI → Pollinations → Mock
         """
         errors = []
 
@@ -729,7 +834,16 @@ class ImageGenerator:
                 except Exception as e:
                     print(f"⚠️ Clipdrop failed: {e}")
                     errors.append(f"clipdrop: {e}")
-            if provider == "webui":
+            elif provider == "siliconflow":
+                if not self.siliconflow.is_available():
+                    continue
+                try:
+                    path = await self.siliconflow.generate(prompt, style, width, height)
+                    return ImageResult(path=path, provider="siliconflow")
+                except Exception as e:
+                    print(f"⚠️ SiliconFlow failed: {e}")
+                    errors.append(f"siliconflow: {e}")
+            elif provider == "webui":
                 if not self.webui.is_available():
                     continue
                 try:
@@ -738,24 +852,6 @@ class ImageGenerator:
                 except Exception as e:
                     print(f"⚠️ Local WebUI failed: {e}")
                     errors.append(f"webui: {e}")
-            elif provider == "replicate":
-                if not self.replicate_token:
-                    continue
-                try:
-                    path = await self.replicate.generate(prompt, style, width, height)
-                    return ImageResult(path=path, provider="replicate")
-                except Exception as e:
-                    print(f"⚠️ Replicate failed: {e}")
-                    errors.append(f"replicate: {e}")
-            elif provider == "huggingface":
-                if not self.hf_token:
-                    continue
-                try:
-                    path = await self.huggingface.generate(prompt, style, width, height)
-                    return ImageResult(path=path, provider="huggingface")
-                except Exception as e:
-                    print(f"⚠️ Hugging Face failed: {e}")
-                    errors.append(f"huggingface: {e}")
             elif provider == "pollinations":
                 if not self.pollinations_enabled:
                     continue
